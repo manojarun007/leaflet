@@ -1,0 +1,140 @@
+<!doctype html><html lang="en"><meta charset="utf-8" />
+<title>*LeafletJS - The Open University, MK7 6AA</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<link rel="stylesheet" href="//cdn.leafletjs.com/leaflet-0.4/leaflet.css" />
+<!--[if lte IE 8]><link rel=stylesheet href="//cdn.leafletjs.com/leaflet-0.4/leaflet.ie.css"><![endif]-->
+
+<style>
+body { margin:0; background:#fcfcfc; }
+#map {
+  min-width:600px; min-height:400px;
+  x-width:1000px; x-height:800px;
+  position:fixed;
+  top:0; bottom:7em;
+  left:0; right:0;
+  border-bottom:1px solid #bbb;
+}
+pre {
+  position:fixed;
+  bottom:0; height:8.5em;
+  margin:0; padding:0 2em;
+}
+</style>
+
+<div id="map"></div>
+
+<script src="//cdn.leafletjs.com/leaflet-0.4/leaflet.js"></script>
+<script>
+var map = L.map('map').setView([52.0243, -0.70961], 16);
+
+L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
+	maxZoom: 18,
+	attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+	'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://cloudmade.com">CloudMade</a>'
+}).addTo(map);
+
+var OU_locations = {
+	JennieLee_B: [52.02427, -0.71129],
+	OU_Library: [52.024, -0.7072],
+	Perry: [52.02468, -0.70814],
+	Berrill: [52.02489, -0.70714],
+	BerrillCafe: [52.02475, -0.70742],
+	BerrillLectureTheatre: [52.02475, -0.70762],
+	Wilson_B: [52.02498, -0.70974],
+	WilsonKBlock: [52.02551, -0.70953],
+	Pentz_B: [52.02616, -0.71065],
+	MichaelYoung_B: [52.02251, -0.70817],
+	Horlock_B: [52.02476, -0.71276],
+	Briggs: [52.0256, -0.71322],
+	StuartHall_B: [52.02598, -0.7127],
+	Meacham_B: [52.02588, -0.71216],
+	OldLectureTheatre: [52.02515, -0.71097],
+	ChristodoulouCMR: [52.02535, -0.7109],
+	AlanTuring_B: [52.02592, -0.7102],
+	Chambers_B: [52.0254, -0.70895],
+	Gardiner_1: [52.02517, -0.71296],
+	Gass_B: [52.02582, -0.70906],
+	RobertHooke_B: [52.02574, -0.70762],
+	Venables: [52.02638, -0.7091],
+	Wolfson: [52.02559, -0.70858],
+	SciencePrepLabs: [52.02568, -0.71104],
+	Workshops: [52.02553, -0.71215],
+	HubOrigins: [52.02508, -0.7117],
+	Pavillion: [52.02688, -0.70974],
+	CellarBar: [52.02481, -0.71089],
+	WaltonHall: [52.02465, -0.71075],
+
+	GeorgeAbellObservatory: [52.02439, -0.70632],
+	Church: [52.02335, -0.71187],
+	MulberryLawn: [52.02475, -0.71153],
+	SecurityLodge: [52.02449, -0.70572],
+	MulberryBearNursery: [52.02666, -0.7111],
+	VisitorCarPark: [52.02496, -0.70671],
+	ChurchCarPark: [52.02354, -0.71039],
+	Cedar_1: [52.02478, -0.71036],
+	Cedar_2_3: [52.02379, -0.71238],
+
+	OU_MainCampus: [52.0243, -0.70961],
+	OU_EastCampus: [52.02525, -0.70222],
+	OU_R01_London: [51.541012,-0.143007], //1-11 Hawley Crescent, Camden Town NW1 8NP. //http://www3.open.ac.uk/contact/details.aspx?contactid=1
+	OU_Wellingborough: [52.288834,-0.690637], //Units 16-21 Dennington Rd,Dennington Indusrial Estate,Wellingborough,North NN8 2RF.
+
+	// OU East campus
+	JoeClinch_B: [52.02556, -0.70188],
+	FrankHenshow_B: [52.02591, -0.70256],
+	PhilipSully_B: [52.0255, -0.70275],
+
+	UniversityRoundabout: [52.0247, -0.70403],
+	Kents_Hill_Park: [52.030106,-0.70267], //Kents Hill Park, Swallow House, Timbold Drive, Kents Hill, MK7 6BZ.
+	Hilton_Hotel: [52.02383, -0.70161],
+	Middleton_Primary_School: [52.04258, -0.71289],
+	Swan_Pub_MK_Village: [52.04253, -0.70459],
+	Swan_Pub_Woughton: [52.0291, -0.7236],
+	Bletchley_Park: [51.99711, -0.73994],
+	Blenchley_Station: [51.9952, -0.73628],
+	MK_Central_Station: [52.03462, -0.77351],
+	MK_Hospital: [52.02609, -0.73578],
+	Xscape: [52.04143, -0.74883],
+	Lk_Place: [52.04649, -0.70822],
+
+	Error_Missing_Road: [52.02465, -0.7035], //OpenStreetMap error.
+	'null':[0,0]
+};
+
+for (var name in OU_locations) {
+	var ll = OU_locations[name];
+	console.log(name, ll);
+	name = name.replace(/_B/,' Building').replace(/MK/, 'Milton Keynes')
+		.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ');
+
+	L.marker(ll).addTo(map).bindPopup("<b>" + name + "</b>");
+}
+
+var popup = L.popup();
+
+function onMapClick(e) {
+	popup
+		.setLatLng(e.latlng)
+		.setContent("You clicked the map at " + e.latlng.toString())
+		.openOn(map);
+}
+
+map.on('click', onMapClick);
+</script>
+
+
+<pre>N.D.Freear, 2012-11-29.
+ * http://leafletjs.com/examples/quick-start.html
+ * <a href="//maps.google.co.uk/?q=MK7+6AA&ll=52.024917,-0.709734&spn=0.01051,0.01929&hnear=MK7+6AA,+United+Kingdom&t=m&z=16">MK7 6AA</a>
+ * http://www3.open.ac.uk/contact/all.aspx
+<!--* http://stackoverflow.com/questions/921789/how-to-loop-through-javascript-object-literal-with-objects-as-members-->
+ * JLB: https://maps.google.co.uk/?q=MK7+6AA&ll=52.024587,-0.711408&spn=0.01051,0.01929&hnear=MK7+6AA,+United+Kingdom&t=m&z=16
+ * Kents Hill: https://maps.google.co.uk/?q=MK7+6AA&ll=52.030106,-0.702674&spn=0.011076,0.01929&hnear=MK7+6AA,+United+Kingdom&t=m&z=16
+
+ * R01 London:  https://maps.google.co.uk/maps?q=1-11+Hawley+Crescent,+Camden+Town,+London,+NW1+8NP&ll=51.541012,-0.143007&z=19
+ * ERROR: "NW1 8UP" --> "NW1, UK" / "NW1 8NP"
+ * Wellingborough: https://maps.google.co.uk/maps?q=Dennington+Road+Dennington+Indusrial+Estate+Wellingborough+Northamptonshire+NN8+2RF&ll=52.288834,-0.690637&z=16
+
+</html>
